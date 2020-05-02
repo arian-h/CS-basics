@@ -1,6 +1,6 @@
 # Compiled class file
 *.class
-.idea
+.idea/
 # Log file
 *.log
 
@@ -18,7 +18,7 @@
 *.zip
 *.tar.gz
 *.rar
-
+gradle
 .gradle
 build
 gradle
