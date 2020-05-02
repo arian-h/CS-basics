@@ -46,4 +46,11 @@ public class ThreewayParitionUT {
         ThreewayParition.threewayPartition(arr, 3);
         Assert.assertArrayEquals(new int[] {1, 1, 2, 1, 2, 1}, arr);
     }
+
+    @Test
+    public void testParition_distinctElements() {
+        int[] arr = new int[] {1, 3, -1, 2};
+        ThreewayParition.threewayPartition(arr, 2);
+        Assert.assertArrayEquals(new int[] {1, -1, 2, 3}, arr);
+    }
 }

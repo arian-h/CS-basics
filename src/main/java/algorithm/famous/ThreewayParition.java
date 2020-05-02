@@ -12,7 +12,7 @@ public class ThreewayParition {
          */
         int smallerNext = 0;
         int largerNext = arr.length - 1;
-        for (int i = 0; i < arr.length && i < largerNext; i++) {
+        for (int i = 0; i < arr.length && i <= largerNext; i++) {
             if (arr[i] < p) {
                 swap(arr, i, smallerNext);
                 smallerNext++;
