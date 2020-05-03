@@ -11,7 +11,7 @@ public class KMPUT {
         Assert.assertEquals(4, KMP.find("aacbaacabaa", "aacabaa"));
         Assert.assertEquals(0, KMP.find("aacbaacabaa", "a"));
         Assert.assertEquals(-1, KMP.find("helloariahowareyouaria", "arian"));
-        Assert.assertEquals(10, KMP.find("googoolimagooli", "gooli"));
+        Assert.assertEquals(3, KMP.find("googoolimagooli", "gooli"));
     }
 
     @Test

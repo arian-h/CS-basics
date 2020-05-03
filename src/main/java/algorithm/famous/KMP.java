@@ -52,13 +52,25 @@ public class KMP {
         return -1;
     }
 
+    /**
+     * Given a state and the state machine, what is the next state?
+     * check the given character with pattern.charAt(state).
+     * If they are same, then next state in sequence is the valid valid state
+     * Otherwise, look at the previous state, as it gives us the length of characters we can skip
+     * before checking characters next time
+     *
+     * @param stateMachine
+     * @param textCharacter
+     * @param pattern
+     * @param state given state
+     * @return the next state
+     */
     private static int nextState(int[] stateMachine, char textCharacter, String pattern, int state) {
+        while (state > 0 && textCharacter != pattern.charAt(state)) {
+            state = stateMachine[state - 1];
+        }
         if (textCharacter == pattern.charAt(state)) {
             state++;
-        } else {
-            while (state > 0 && textCharacter != pattern.charAt(state)) {
-                state = stateMachine[state - 1];
-            }
         }
         return state;
     }
