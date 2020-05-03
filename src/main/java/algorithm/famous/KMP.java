@@ -1,6 +1,26 @@
 package algorithm.famous;
 
 public class KMP {
+
+
+    /**
+     * The naive method to find a pattern within a text is to move the pattern one index at a time through the text and
+     * compare characters of the pattern with the text. This results an algorithm with O(n*m) time complexity, which
+     * doesn't perform well for long texts. The main reason behind this high time complexity is "backtracking" which
+     * wastes time. When a text doesn't match with the pattern, in this method, we go back in the text. This
+     * backtracking is the main reason for this high time complexity.
+     *
+     * KMP lets us to move only in forward direction within the text, examining one character at a time, and therefore
+     * no backtracking and no time waste and O(n + m) time complexity. (n: text length, m: pattern length)
+     * This time improvement becomes possible with cost of preprocessing the pattern, inducing O(m) space complexity
+     * while in the naive method, space complexity was O(1).
+     *
+     * 
+     *
+     * @param text input text to search through
+     * @param p pattern to find within the text
+     * @return index of the pattern occurrence in text
+     */
     public static int find(String text, String p) {
         int[] states = createStateMachine(p);
         int nextIndexToMatch = 0;
