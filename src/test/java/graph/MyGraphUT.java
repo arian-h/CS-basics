@@ -282,6 +282,20 @@ public class MyGraphUT {
         Assert.assertFalse(graph.isConnected());
     }
 
+    @Test
+    public void testMinColors_1() {
+        IMyGraph<Integer> graph = create_Undirected_Weighted_Graph();
+        int minColors = graph.minColors();
+        Assert.assertTrue(minColors <= 4 && minColors >= 3);
+    }
+
+    @Test
+    public void testMinColors_2() {
+        IMyGraph<Integer> graph = create_Undirected_Unweighted_Graph();
+        int minColors = graph.minColors();
+        Assert.assertTrue(minColors <= 4 && minColors >= 3);
+    }
+
     /*  Used astrix * instead of arrow pointing towards the closer node
                             5
                           /   *

@@ -323,6 +323,53 @@ public class MyGraph<T extends Comparable<T>> implements IMyGraph<T> {
     }
 
     /**
+     * This is a greedy approximation to a problem that is known to be NP problem.
+     * Though it guarantees that the minimum number of colorings is no more than d + 1 and no less than d.
+     *
+     * Time complexity: O(|V| + |E|) we visit each node once, and each edge twice
+     * Space complexity: O(|V|) to keep the colors for nodes.
+     *
+     * There exists a better approximation as well, called Welsh-Powell algorithm.
+     * In that algorithm, first nodes are sorted based on their degree in decreasing order,
+     * the first node in the list is selected, and colored to a minimum number and all the nodes in the list
+     * that are not adjacent to that node are painted with the same color. This process continues for nodes without
+     * color until all nodes are painted.
+     *
+     */
+    @Override
+    public int minColors() {
+        // move over the nodes
+        // for the current node in hand, find the minimum color number
+        // assign it to the node, move to the next one
+        Map<IMyGraphNode<T>, Integer> colors = new HashMap<>();
+        for (IMyGraphNode<T> node: nodes.values()) {
+            colors.put(node, findMinimumColor(node, colors));
+        }
+        int max = Integer.MIN_VALUE;
+        for (int color: colors.values()) {
+            max = Math.max(color, max);
+        }
+        return max;
+    }
+
+    private int findMinimumColor(IMyGraphNode<T> node, Map<IMyGraphNode<T>, Integer> colors) {
+        Set<Integer> neighborsColors = new HashSet<>();
+        if (mode == Mode.DIRECTED) {
+            for (IMyGraphNode<T> neighbor: node.getIncomingNeighbors()) {
+                neighborsColors.add(colors.get(neighbor));
+            }
+        }
+        for (IMyGraphNode<T> neighbor: node.getOutgoingNeighbors()) {
+            neighborsColors.add(colors.get(neighbor));
+        }
+        int minColor = 1;
+        while (neighborsColors.contains(minColor)) {
+            minColor++;
+        }
+        return minColor;
+    }
+
+    /**
      * Sort the nodes in topological order, so we see the nodes in order of flow with the minimum back edges
      * Then do a dfs based on this order, but reverse the edges
      * Why? let's say the graph has N strongly connected components

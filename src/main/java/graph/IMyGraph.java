@@ -131,4 +131,10 @@ public interface IMyGraph<T extends Comparable<T>> {
      */
     boolean isConnected();
 
+    /**
+     * An approximation of minimum number of colors required to color the nodes without painting any two neighbor
+     * with the same color
+     */
+    int minColors();
+
 }
