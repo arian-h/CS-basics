@@ -11,4 +11,9 @@ public class BinarySearchTreeUT {
         Assert.assertEquals(5, BinarySearchTree.getCount(3));
     }
 
+    @Test
+    public void testMinCost() {
+        Assert.assertEquals(1.5, BinarySearchTree.minCost(new double[] {0.3, 0.1, 0.6}), 0.001);
+        Assert.assertEquals(0.5, BinarySearchTree.minCost(new double[] {0.3, 0.1}), 0.001);
+    }
 }
