@@ -3,8 +3,7 @@ package algorithm.dp;
 public class BinarySearchTree {
 
     /**
-     * Given a number of nodes in a binary tree, how many different binary trees can one create? the nodes are
-     * distinct.
+     * Given number of nodes, how many different binary trees can one create? the nodes are distinct.
      *
      * Dynamic programming approach to this problem. This algorithm chooses on node as a root, splits tree into
      * left and right subtrees, and multiply the number of left/ right subtrees. It considers different roots (and therefore
