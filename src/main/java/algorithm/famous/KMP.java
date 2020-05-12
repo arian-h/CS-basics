@@ -1,5 +1,7 @@
 package algorithm.famous;
 
+import java.util.Arrays;
+
 public class KMP {
 
 
@@ -7,8 +9,9 @@ public class KMP {
      * The naive method to find a pattern within a text is to move the pattern one index at a time through the text and
      * compare characters of the pattern with the text. This results an algorithm with O(n*m) time complexity, which
      * doesn't perform well for long texts. The main reason behind this high time complexity is "backtracking" which
-     * wastes time. When a text doesn't match with the pattern, in this method, we go back in the text. This
-     * backtracking is the main reason for this high time complexity.
+     * wastes time. When there is a mismatch between a text and a pattern, no matter how any characters matched before
+     * the mismatch, we move the pattern by one character, and we do the comparison from the beginning of both text
+     * and pattern. This backtracking wastes time.
      *
      * KMP lets us to move only in forward direction within the text, examining one character at a time, and therefore
      * no backtracking and no time waste and O(n + m) time complexity. (n: text length, m: pattern length)
@@ -20,12 +23,13 @@ public class KMP {
      * on the text.
      * This is the main reason that this algorithm works in such time.
      *
-     * How the algorithm works?
+     * How does the algorithm work?
      * initialize state of the state machine to 0. We need this state to move between different states.
      * Iterate over text, one character at a time, feed it to state machine and get the next state
-     * Check if the given text character matches with the expected character that state is pointing to
+     * Check if the given text character matches with the expected character that state is pointing to,
      * If it does, then increase state by one (go to the next state in sequence) and go to the next character in text
      * If it doesn't, then find another state and compare text character with that one.
+     *
      * How to find another state?
      * The state machine contains length of the longest prefix that is also a suffix of each substring
      * (starting from the beginning of the pattern).
