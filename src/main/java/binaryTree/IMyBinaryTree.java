@@ -25,6 +25,11 @@ public interface IMyBinaryTree<T> {
 
     boolean isEmpty();
 
+    /**
+     * Whether tree is symmetric value-wise or not
+     */
+    boolean isSymmetric();
+
     static <T> IMyBinaryTree<T> getInstance() {
         return MyBinaryTree.getInstance();
     }

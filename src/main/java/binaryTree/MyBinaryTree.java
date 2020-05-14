@@ -78,6 +78,14 @@ public class MyBinaryTree<T> implements IMyBinaryTree<T> {
     }
 
     @Override
+    public boolean isSymmetric() {
+        if (root == null) {
+            return  true;
+        }
+        return areSymmetric(root.getLeft(), root.getRight());
+    }
+
+    @Override
     public int size() {
         return size(this.root);
     }
@@ -95,6 +103,19 @@ public class MyBinaryTree<T> implements IMyBinaryTree<T> {
         root.addLeft(constructPreorderInorder(preorder, inorder, inorderLeftIndex, index - 1));
         root.addRight(constructPreorderInorder(preorder, inorder, index + 1, inorderRightIndex));
         return root;
+    }
+
+    private boolean areSymmetric(IMyTreeNode<T> left, IMyTreeNode<T> right) {
+        if (left == null && right == null) {
+            return true;
+        }
+        if (left == null || right == null) {
+            return false;
+        }
+        if (left.getValue() != right.getValue()) {
+            return false;
+        }
+        return areSymmetric(left.getLeft(), right.getRight()) && areSymmetric(left.getRight(), right.getLeft());
     }
 
     private IMyTreeNode<T> constructInorderPostorder(Stack<T> postorder, T[] inorder, int inorderLeftIndex, int inorderRightIndex) {

@@ -86,6 +86,16 @@ public class MyBinaryTreeUT {
         Assert.assertEquals(expectedPostorderNodes, postorderNodes);
     }
 
+    @Test
+    public void testIsSymmetric_symmetirc() {
+        Assert.assertTrue(createSymmetricTree().isSymmetric());
+    }
+
+    @Test
+    public void testIsSymmetric_nonSymmetric() {
+        Assert.assertFalse(createTestTree().isSymmetric());
+    }
+
     /*
                                         0
                             1                      2
@@ -101,6 +111,23 @@ public class MyBinaryTreeUT {
         IMyTreeNode<String> node6 = node2.addRight("6");
         IMyTreeNode<String> node9 = node4.addLeft("9");
         IMyTreeNode<String> node14 = node6.addRight("14");
+        return IMyBinaryTree.getInstance(root);
+    }
+
+    /*
+                                    1
+                            2               2
+                3                                  3
+                    4                          4
+    */
+    private IMyBinaryTree<String> createSymmetricTree() {
+        IMyTreeNode<String> root = new MyTreeNode<>("1");
+        IMyTreeNode<String> node1 = root.addLeft("2");
+        IMyTreeNode<String> node2 = root.addRight("2");
+        IMyTreeNode<String> node3 = node1.addLeft("3");
+        IMyTreeNode<String> node4 = node2.addRight("3");
+        IMyTreeNode<String> node5 = node3.addRight("4");
+        IMyTreeNode<String> node6 = node4.addLeft("4");
         return IMyBinaryTree.getInstance(root);
     }
 
