@@ -14,6 +14,9 @@ public interface IMyBinaryTree<T> {
 
     void constructInorderPostorder(T[] inorder, T[] postorder);
 
+    /**
+     * Creating a unique tree given preorder and postorder is only possible for full binary trees.
+     */
     void constructPreorderPostorder(T[] preorder, T[] postorder);
 
     List<T> getTree(Traverse traverse);
