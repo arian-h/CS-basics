@@ -2,6 +2,12 @@ package sort;
 
 public class SelectionSort {
 
+    /**
+     * This is an unstable sort. At the i-th step, it finds the minimum element on [i, arr.length - 1]
+     * and replace i-th element with it.
+     * @param arr
+     * @param <T>
+     */
     public static <T extends Comparable<T>> void sort(T[] arr) {
         if (arr == null || arr.length == 0) {
             return;
