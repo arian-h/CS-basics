@@ -2,6 +2,11 @@ package sort;
 
 public class MergeSort {
 
+    /**
+     * Not an in place sort. It is an stable sort, because when merging is done, the order of equal elements
+     * are kept.
+     * @param arr
+     */
     public static void sort(int[] arr) {
         if (arr == null || arr.length == 0) {
             return;
@@ -17,9 +22,7 @@ public class MergeSort {
         mergeSort(arr, l, mid);
         mergeSort(arr, mid + 1, r);
         int[] sorted = merge(arr, l, mid, r);
-        for (int i = 0; i < sorted.length; i++) {
-            arr[i + l] = sorted[i];
-        }
+        System.arraycopy(sorted, 0, arr,  l, sorted.length);
     }
 
     private static int[] merge(int[] arr, int l, int mid, int r) {
@@ -28,7 +31,7 @@ public class MergeSort {
         int j = mid + 1;
         int index = 0;
         while (i <= mid && j <= r) {
-            if (arr[i] < arr[j]) {
+            if (arr[i] <= arr[j]) {
                 merged[index] = arr[i];
                 i++;
             } else {
