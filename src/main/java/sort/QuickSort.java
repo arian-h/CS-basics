@@ -6,7 +6,7 @@ package sort;
  * The depth of the tree (if pivot approximately halves the array) is O(logn)
  * Each level involves O(n) operations. Therefore the whole time complexity is O(nlogn)
  */
-public class MyQuickSort {
+public class QuickSort {
 
     public static <T extends Comparable<T>> void sort(T[] arr) {
         sort(arr, 0, arr.length - 1);
