@@ -4,9 +4,11 @@ import javafx.util.Pair;
 
 public interface IMyKDTree {
 
-    Pair<Integer, Integer> findNearest(Pair<Integer, Integer> point);
+    Pair<Integer, Integer> findClosest(Pair<Integer, Integer> point);
 
     static IMyKDTree getInstance(Pair<Integer, Integer>[] points) {
-        return MyKDTree.getInstance(points);
+        KDTree kdTree = new KDTree(points);
+        kdTree.build();
+        return kdTree;
     }
 }

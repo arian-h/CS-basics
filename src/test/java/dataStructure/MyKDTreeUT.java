@@ -14,7 +14,7 @@ public class MyKDTreeUT {
                 new Pair<>(1, 1),
                 new Pair<>(2, 2)
         });
-        Pair<Integer, Integer> closest = tree.findNearest(new Pair<>(1, 2));
+        Pair<Integer, Integer> closest = tree.findClosest(new Pair<>(1, 2));
         Assert.assertEquals(new Pair<>(1, 2), closest);
     }
 
@@ -27,7 +27,7 @@ public class MyKDTreeUT {
                 new Pair<>(2, 2),
                 new Pair<>(4, 7)
         });
-        Pair<Integer, Integer> closest = tree.findNearest(new Pair<>(6, 7));
+        Pair<Integer, Integer> closest = tree.findClosest(new Pair<>(6, 7));
         Assert.assertEquals(new Pair<>(4, 7), closest);
     }
 
@@ -36,7 +36,7 @@ public class MyKDTreeUT {
         IMyKDTree tree = IMyKDTree.getInstance(new Pair[] {
                 new Pair<>(1, 2)
         });
-        tree.findNearest(null);
+        tree.findClosest(null);
     }
 
     @Test(expected = RuntimeException.class)
@@ -48,6 +48,6 @@ public class MyKDTreeUT {
     @Test
     public void testQueryEmptyTree() {
         IMyKDTree tree = IMyKDTree.getInstance(new Pair[] {});
-        Assert.assertNull(tree.findNearest(new Pair<>(6, 7)));
+        Assert.assertNull(tree.findClosest(new Pair<>(6, 7)));
     }
 }

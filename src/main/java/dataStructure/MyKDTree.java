@@ -6,27 +6,7 @@ import javafx.util.Pair;
 import java.util.*;
 import java.util.stream.Collectors;
 
-/**
- * Data structure to store 2-dimensional data points, with efficient querying to find the closest point to a given query
- * Construction:
- *  Space complexity: O(n)
- *      Each node has a dimension, which dimension it splits a point, that is a data point stored in the tree
- *      and two points to children
- *  Time complexity: O(nlogn)
- *      we hope it is a balanced tree, so it has o(logn) levels, for each node, we randomly choose a median and
- *      split the points in to two sets, each for each child. Each level has O(n) operations for total splitting,
- *      therefore the whole time complexity is O(nlogn)
- *
- *  Find closest neighbor complexity:
- *      Move recursively from root:
- *          if current node is null, return null
- *          if current point is in a box that is farther than the closest point found so far, then it's not even worth
- *              checking that subtree
- *          otherwise, we have to check both subtrees, BUT, we use our best guess to find the closest point faster,
- *              so when we go to the other subtree, we don't even bother searching that subtree (option #2)
- *              Here is how: if query is on left hand side of the current point, search left subtree first
- *                           otherwise, search right subtree first
- */
+
 public class MyKDTree implements IMyKDTree {
 
     private final Node root;
@@ -37,7 +17,7 @@ public class MyKDTree implements IMyKDTree {
     }
 
     @Override
-    public Pair<Integer, Integer> findNearest(Pair<Integer, Integer> query) {
+    public Pair<Integer, Integer> findClosest(Pair<Integer, Integer> query) {
         Preconditions.checkArgument(query != null, "query cannot be null");
         if (root == null) {
             return null;
