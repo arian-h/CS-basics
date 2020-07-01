@@ -33,15 +33,49 @@ public class MyBinaryTree<T> implements IMyBinaryTree<T> {
     @Override
     public void constructPreorderInorder(T[] preorder, T[] inorder) {
         constructPreCheck(inorder, preorder);
-        this.root = constructPreorderInorder(new LinkedList<>(Arrays.asList(preorder)), inorder, 0, inorder.length - 1);
+        this.root = constructInorder(preorder, inorder, Comparator.comparingInt(i -> i));
     }
 
     @Override
     public void constructInorderPostorder(T[] inorder, T[] postorder) {
         constructPreCheck(inorder, postorder);
-        Stack<T> postorderStack = new Stack<>();
-        Arrays.stream(postorder).forEach(postorderStack::push);
-        this.root = constructInorderPostorder(postorderStack, inorder, 0, inorder.length - 1);
+        this.root = constructInorder(postorder, inorder, (i, j) -> j - i);
+    }
+
+    /*
+     * This implementation takes worst case O(n^2) time and O(n) space
+     */
+    private IMyTreeNode<T> constructInorder(T[] preorder, T[] inorder, Comparator<Integer> comparator) {
+        Map<T, Integer> index = new HashMap<>();
+        for (int i = 0; i < preorder.length; i++) {
+            index.put(preorder[i], i);
+        }
+        List<T> nodes = Arrays.asList(inorder);
+        return constructInorder(nodes, index, comparator);
+    }
+
+    private IMyTreeNode<T> constructInorder(List<T> nodes, Map<T, Integer> index, Comparator<Integer> comparator) {
+        if (nodes.size() == 0) {
+            return null;
+        }
+        int rootIndex = findRootIndex(nodes, index, comparator);
+        IMyTreeNode<T> root = new MyTreeNode<>(nodes.get(rootIndex));
+        if (nodes.size() == 1) {
+            return root;
+        }
+        root.addLeft(constructInorder(nodes.subList(0, rootIndex), index, comparator));
+        root.addRight(constructInorder(nodes.subList(rootIndex + 1, nodes.size()), index, comparator));
+        return root;
+    }
+
+    private int findRootIndex(List<T> nodes, Map<T, Integer> indices, Comparator<Integer> comparator) {
+        int index = 0;
+        for (int i = 1; i < nodes.size(); i++) {
+            if (comparator.compare(indices.get(nodes.get(i)), indices.get(nodes.get(index))) < 0) {
+                index = i;
+            }
+        }
+        return index;
     }
 
     @Override
@@ -90,21 +124,6 @@ public class MyBinaryTree<T> implements IMyBinaryTree<T> {
         return size(this.root);
     }
 
-    /*
-     * This implementation takes O(n^2) time and O(n) space
-     */
-    private IMyTreeNode<T> constructPreorderInorder(Queue<T> preorder, T[] inorder, int inorderLeftIndex, int inorderRightIndex) {
-        if (preorder.isEmpty() || inorderLeftIndex > inorderRightIndex) {
-            return null;
-        }
-        T rootValue = preorder.poll();
-        IMyTreeNode<T> root = new MyTreeNode<>(rootValue);
-        int index = findNode(inorder, rootValue);
-        root.addLeft(constructPreorderInorder(preorder, inorder, inorderLeftIndex, index - 1));
-        root.addRight(constructPreorderInorder(preorder, inorder, index + 1, inorderRightIndex));
-        return root;
-    }
-
     private boolean areSymmetric(IMyTreeNode<T> left, IMyTreeNode<T> right) {
         if (left == null && right == null) {
             return true;
@@ -116,18 +135,6 @@ public class MyBinaryTree<T> implements IMyBinaryTree<T> {
             return false;
         }
         return areSymmetric(left.getLeft(), right.getRight()) && areSymmetric(left.getRight(), right.getLeft());
-    }
-
-    private IMyTreeNode<T> constructInorderPostorder(Stack<T> postorder, T[] inorder, int inorderLeftIndex, int inorderRightIndex) {
-        if (postorder.isEmpty() || inorderLeftIndex > inorderRightIndex) {
-            return null;
-        }
-        T rootValue = postorder.pop();
-        IMyTreeNode<T> root = new MyTreeNode<>(rootValue);
-        int index = findNode(inorder, rootValue);
-        root.addRight(constructInorderPostorder(postorder, inorder, index + 1, inorderRightIndex));
-        root.addLeft(constructInorderPostorder(postorder, inorder, inorderLeftIndex, index - 1));
-        return root;
     }
 
     /*
