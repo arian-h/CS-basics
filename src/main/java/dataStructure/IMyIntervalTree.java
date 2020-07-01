@@ -11,9 +11,13 @@ import java.util.List;
 public interface IMyIntervalTree {
 
     static IMyIntervalTree getInstance(List<Pair<Integer, Integer>> intervals) {
-        return MyIntervalTree.getInstance(intervals);
+        IntervalTree tree = new IntervalTree(intervals);
+        tree.build();
+        return tree;
     }
 
     List<Pair<Integer, Integer>> find(int point);
+
     List<Pair<Integer, Integer>> find(Pair<Integer, Integer> interval);
+
 }
