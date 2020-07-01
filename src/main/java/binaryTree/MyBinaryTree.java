@@ -78,10 +78,56 @@ public class MyBinaryTree<T> implements IMyBinaryTree<T> {
         return index;
     }
 
+    /**
+     * The first element in the preorder list is the root. The rest of elements can be divided into left and right
+     * and go to the left and right children respectively.
+     * how to divide the list into two left and right sublists? look at findRightIndex
+     * @param preorder preorder representation of the tree
+     * @param postorder postorder representation of the tree
+     */
     @Override
     public void constructPreorderPostorder(T[] preorder, T[] postorder) {
         constructPreCheck(preorder, postorder);
-        this.root = constructPreorderPostorder(preorder, postorder, 0, preorder.length - 1, 0, postorder.length - 1);
+        Map<T, Integer> indices = new HashMap<>();
+        for (int i = 0; i < postorder.length; i++) {
+            indices.put(postorder[i], i);
+        }
+        List<T> preorderList = new ArrayList<>(Arrays.asList(preorder));
+        this.root = constructPreorderPostorder(preorderList, indices);
+    }
+
+    private IMyTreeNode<T> constructPreorderPostorder(List<T> preorder, Map<T, Integer> indices) {
+        if (preorder.isEmpty()) {
+            return null;
+        }
+        IMyTreeNode<T> root = new MyTreeNode<>(preorder.remove(0));
+        if (!preorder.isEmpty()) {
+            int rightIndex = findRightIndex(preorder, indices);
+            root.addLeft(constructPreorderPostorder(preorder.subList(0, rightIndex), indices));
+            root.addRight(constructPreorderPostorder(preorder, indices));
+        }
+        return root;
+    }
+
+    /**
+     * We know that the tree is full (meaning that each node has no child, or two children)
+     * How do we know that? Because we cannot reconstruct a unique tree from preorder and postorder only for full
+     * binary trees.
+     * the first element in this list belongs to the left child.
+     * We find the first element that has an index larger than the first element. This means from that point
+     * the right sublist started.
+     * 
+     * @param preorder
+     * @param indices
+     * @return the index of the first right sublist element
+     */
+    private int findRightIndex(List<T> preorder, Map<T, Integer> indices) {
+        int index = indices.get(preorder.get(0));
+        int i = 1;
+        while (i < preorder.size() && indices.get(preorder.get(i)) < index) {
+            i++;
+        }
+        return i;
     }
 
     private void constructPreCheck(T[] traversal1, T[] traversal2) {
@@ -135,31 +181,6 @@ public class MyBinaryTree<T> implements IMyBinaryTree<T> {
             return false;
         }
         return areSymmetric(left.getLeft(), right.getRight()) && areSymmetric(left.getRight(), right.getLeft());
-    }
-
-    /*
-        Took a different approach for this algorithm, comparing to the other two.
-        Recursively follows this logic:
-            For each subproblem, the first element of the preorder array is same as the last element, which is root
-            The remaining subarray must be broken down into two subarrays for left and right subtrees
-            Figure out the size of the left subtree by finding first element of the preorder list the post order list
-            Call the method recursively using the new left and right for pre and post order lists
-     */
-    private IMyTreeNode<T> constructPreorderPostorder(T[] preorder, T[] postorder, int preorderLeftIndex, int preorderRightIndex, int postorderLeftIndex, int postorderRightIndex) {
-        if (preorderLeftIndex > preorderRightIndex || postorderLeftIndex > postorderRightIndex) {
-            return null;
-        }
-        IMyTreeNode<T> root = new MyTreeNode<>(preorder[preorderLeftIndex]);
-        postorderRightIndex--;
-        preorderLeftIndex++;
-        if (preorderLeftIndex > preorderRightIndex) {
-            return root;
-        }
-        int index = findNode(postorder, preorder[preorderLeftIndex]);
-        int leftSubtreeSize = index - postorderLeftIndex;
-        root.addLeft(constructPreorderPostorder(preorder, postorder, preorderLeftIndex, preorderLeftIndex + leftSubtreeSize, postorderLeftIndex, index));
-        root.addRight(constructPreorderPostorder(preorder, postorder, preorderLeftIndex + leftSubtreeSize + 1, preorderRightIndex, index + 1, postorderRightIndex));
-        return root;
     }
 
     private List<T> getPostorderTree() {
@@ -221,10 +242,6 @@ public class MyBinaryTree<T> implements IMyBinaryTree<T> {
             node = node.getLeft();
         }
         return stack;
-    }
-
-    private int findNode(T[] values, T toFind) {
-        return IntStream.range(0, values.length).filter(i -> values[i].equals(toFind)).findFirst().orElse(-1);
     }
 
     private int size(IMyTreeNode<T> node) {
