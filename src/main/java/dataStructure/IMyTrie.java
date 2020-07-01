@@ -9,6 +9,6 @@ public interface IMyTrie {
     List<String> getAll();
 
     static IMyTrie getInstance() {
-        return MyTrie.getInstance();
+        return new MyTrie();
     }
 }

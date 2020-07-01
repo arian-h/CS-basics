@@ -1,94 +1,100 @@
 package dataStructure;
 
-import com.google.common.base.Preconditions;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class MyTrie implements IMyTrie {
 
-    private Node root;
+    private final Node root;
 
-    private MyTrie() {
+    public MyTrie() {
         this.root = new Node();
-    }
-
-    public static IMyTrie getInstance() {
-        return new MyTrie();
     }
 
     @Override
     public void insert(String s) {
-        Preconditions.checkArgument(s != null, "cannot insert null");
-        Node node = root;
-        int index = 0;
-        while (index < s.length() && node.map.containsKey(s.charAt(index))) {
-            node = node.map.get(s.charAt(index));
-            index++;
-        }
-        while (index < s.length()) {
-            Node n = new Node();
-            node.map.put(s.charAt(index), n);
-            node = n;
-            index++;
-        }
-        node.leaf = true;
+        insert(s, 0, root);
     }
 
     @Override
     public void remove(String s) {
-        Preconditions.checkArgument(s != null, "there is no null stored");
-        Preconditions.checkArgument(contains(s), "string is not stored");
-        remove(root, s, -1);
+        remove(s, 0, root);
     }
 
     @Override
     public boolean contains(String s) {
-        Preconditions.checkArgument(s != null, "cannot insert null");
-        Node node = root;
+        Node current = this.root;
         int index = 0;
-        while (index < s.length() && node.map.containsKey(s.charAt(index))) {
-            node = node.map.get(s.charAt(index));
+        while (current != null && index < s.length()) {
+            if (!current.children.containsKey(s.charAt(index))) {
+                return false;
+            }
+            current = current.children.get(s.charAt(index));
             index++;
         }
-        return node.leaf;
+        if (current == null) {
+            return index == s.length();
+        }
+        return current.endNode;
     }
 
     @Override
     public List<String> getAll() {
-        List<String> list = new ArrayList<>();
-        getAll_rec(root, new StringBuilder(), list);
-        return Collections.unmodifiableList(list);
+        List<String> stringList = new ArrayList<>();
+        getAll(root, stringList, new StringBuilder());
+        return stringList;
     }
 
-    private boolean remove(Node node, String s, int index) {
-        if (index >= s.length() - 1) {
-            node.leaf = false;
-        } else {
-            if (remove(node.map.get(s.charAt(index + 1)), s, index + 1)) {
-                node.map.remove(s.charAt(index + 1));
-            }
+    private void getAll(Node node, List<String> stringList, StringBuilder string) {
+        if (node == null) {
+            return;
         }
-        return !node.leaf && node.map.size() == 0;
+        if (node.endNode) {
+            stringList.add(string.toString());
+        }
+        for (char c: node.children.keySet()) {
+            Node nextNode = node.children.get(c);
+            string.append(c);
+            getAll(nextNode, stringList, string);
+            string.deleteCharAt(string.length() - 1);
+        }
     }
 
-    private void getAll_rec(Node n, StringBuilder strbld, List<String> list) {
-        if (n.leaf) {
-            list.add(strbld.toString());
-        } else {
-            for (char c: n.map.keySet()) {
-                strbld.append(c);
-                getAll_rec(n.map.get(c), strbld, list);
-                strbld.deleteCharAt(strbld.length() - 1);
-            }
+    private boolean remove(String s, int index, Node node) {
+        if (index == s.length()) {
+            node.endNode = false;
+            return node.children.size() == 0;
+        }
+        if (!node.children.containsKey(s.charAt(index))) {
+            return false;
+        }
+        boolean removeChild = remove(s, index + 1, node.children.get(s.charAt(index)));
+        if (removeChild) {
+            node.children.remove(s.charAt(index));
+            return node.children.size() == 0 && !node.endNode;
+        }
+        return false;
+    }
+
+    private void insert(String s, int index, Node node) {
+        if (index == s.length()) {
+            node.endNode = true;
+        }
+        if (index < s.length()) {
+            char currentChar = s.charAt(index);
+            node.children.putIfAbsent(currentChar, new Node());
+            insert(s, index + 1, node.children.get(currentChar));
         }
     }
 
     private static class Node {
-        private Map<Character, Node> map;
-        private boolean leaf;
-        public Node() {
-            this.map = new HashMap<>();
-            this.leaf = false;
+        Map<Character, Node> children;
+        boolean endNode;
+        Node() {
+            this.children = new HashMap<>();
+            this.endNode = false;
         }
     }
 }
