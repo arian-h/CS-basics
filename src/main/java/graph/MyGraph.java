@@ -583,54 +583,51 @@ public class MyGraph<T extends Comparable<T>> implements IMyGraph<T> {
         return closest;
     }
 
+    /**
+     * Assume that distance(i, j, k) represents the distance between nodes i and j, using all the nodes in {1,...,k}
+     * Recursively we can say: distance(i, j, k) = min( distance(i, j, k - 1), distance(i, k, k - 1) + distance(k, j, k - 1) )
+     * This formula is the heart of the floyd warshall algorithm.
+     *
+     * To implement it, we take a matrix of size |V| * |V|, and initialize it with edge weights.
+     * Then we increment k by one at each step. and follow the algorithm.
+     *
+     * The time complexity is: O(|V| ^ 3) and the space complexity is O(|V| ^ 2)
+     *
+     */
     private void computeFloydWarshallDistance() {
-        // initialize
-        // list all the reachable nodes from root
-        List<IMyGraphNode<T>> nodes = getNodes();
-        // assign an index to each reachable node
-        int index = 0;
-        for (IMyGraphNode<T> node: nodes) {
-            fwNodeToIndex.put(node, index);
-            index++;
-        }
-        // initialize distance map, distance of each node to itself is 0, for every other node it's the
-        // weight of the edge connecting source to target, otherwise it's infinite (null) to begin with
-        fwDistance = new Integer[nodes.size()][nodes.size()];
-        for (IMyGraphNode<T> source: nodes) {
-            for (IMyGraphNode<T> target: nodes) {
-                if (source == target) {
-                    fwDistance[fwNodeToIndex.get(source)][fwNodeToIndex.get(target)] = 0;
+        // create a list of nodes
+        List<IMyGraphNode<T>> nodes = new ArrayList<>(this.nodes.values());
+        int v = nodes.size();
+        // mem for the algorithm's dynamic programming solution
+        Integer[][] distance = new Integer[v][v];
+        // initialize the matrix and fill in the fwNodeToIndex
+        for (int i = 0; i < v; i++) {
+            fwNodeToIndex.put(nodes.get(i), i);
+            for (int j = 0; j < v; j++) {
+                if (i == j) {
+                    distance[i][i] = 0;
                 } else {
-                    fwDistance[fwNodeToIndex.get(source)][fwNodeToIndex.get(target)] = source.getWeight(target);
+                    distance[i][j] = nodes.get(i).getWeight(nodes.get(j));
                 }
             }
         }
-
-        // dp: propose a node each time and check if each two node can have a shorter distance
-        // if we include that node in their path
-        for (IMyGraphNode<T> proposed: nodes) {
-            for (IMyGraphNode<T> source: nodes) {
-                for (IMyGraphNode<T> target: nodes) {
-                    updateFWMin(source, target, proposed);
+        // loop over each pair, for V times
+        for (int k = 0; k < v; k++) {
+            for (int i = 0; i < v; i++) {
+                for (int j = 0; j < v; j++) {
+                    if (distance[i][j] == null) {
+                        if (distance[i][k] != null && distance[k][j] != null) {
+                            distance[i][j] = distance[i][k] + distance[k][j];
+                        }
+                    } else {
+                        if (distance[i][k] != null && distance[k][j] != null) {
+                            distance[i][j] = Math.min(distance[i][j], distance[i][k] + distance[k][j]);
+                        }
+                    }
                 }
             }
         }
+        fwDistance = distance;
     }
 
-    private void updateFWMin(IMyGraphNode<T> source, IMyGraphNode<T> target, IMyGraphNode<T> proposed) {
-        int i = fwNodeToIndex.get(source);
-        int j = fwNodeToIndex.get(target);
-        int k = fwNodeToIndex.get(proposed);
-        Integer proposedDistance = null;
-        if (fwDistance[i][k] != null && fwDistance[k][j] != null) {
-            proposedDistance = fwDistance[i][k] + fwDistance[k][j];
-        }
-        if (fwDistance[i][j] == null) {
-            if (proposedDistance != null) {
-                fwDistance[i][j] = proposedDistance;
-            }
-        } else if (proposedDistance != null) {
-            fwDistance[i][j] = Math.min(fwDistance[i][j], proposedDistance);
-        }
-    }
 }

@@ -55,8 +55,11 @@ public interface IMyGraph<T extends Comparable<T>> {
     List<IMyGraphNode<T>> getNodes();
 
     /**
-     * Calculate distance between source and target using floyd-warshall algorithm
-     * Graph should be weighted, and
+     * Floyd Warshall algorithm calculates the distance between every two nodes in a weighted, directed graph,
+     * no matter the weights are positive or negative, as long as there is no negative cycle in the graph.
+     * The approach for the algorithm is dynamic-programming.
+     *
+     *
      * @param source source node
      * @param target target node
      * @return distance between source to target, null if there is not path
