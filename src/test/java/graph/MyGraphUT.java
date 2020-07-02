@@ -71,7 +71,7 @@ public class MyGraphUT {
     @Test
     public void testDijkstra() {
         IMyGraph<Integer> graph = create_Directed_Weighted_Graph();
-        Map<Integer, Integer> shortestPath = graph.dijkstra();
+        Map<Integer, Integer> shortestPath = graph.dijkstra(graph.getRoot());
         Assert.assertEquals(new HashMap<Integer, Integer>() {{
             put(1, 0);
             put(3, 3);

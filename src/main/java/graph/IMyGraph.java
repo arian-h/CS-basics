@@ -16,6 +16,8 @@ public interface IMyGraph<T extends Comparable<T>> {
 
     void setRoot(IMyGraphNode<T> node);
 
+    IMyGraphNode<T> getRoot();
+
     /**
      * Depth first search
      * @return a map from each node to the number of nodes visited or finished before it (finish time)
@@ -32,7 +34,7 @@ public interface IMyGraph<T extends Comparable<T>> {
      * Finds the shortest path between root and all other reachable nodes
      * @return a map of nodes to their distance to the root
      */
-    Map<T, Integer> dijkstra();
+    Map<T, Integer> dijkstra(IMyGraphNode<T> node);
 
     /**
      * Sort nodes of a graph in topological order

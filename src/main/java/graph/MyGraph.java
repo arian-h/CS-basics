@@ -39,6 +39,11 @@ public class MyGraph<T extends Comparable<T>> implements IMyGraph<T> {
     }
 
     @Override
+    public IMyGraphNode<T> getRoot() {
+        return this.root;
+    }
+
+    @Override
     public Map<T, Integer> dfs() {
         return dfs_visit(this.root).entrySet().stream()
                 .collect(Collectors.toMap(entry -> entry.getKey().getValue(), Map.Entry::getValue));
@@ -110,27 +115,26 @@ public class MyGraph<T extends Comparable<T>> implements IMyGraph<T> {
     }
 
     /**
-     * This could be slightly extended to use any node in the graph as the start point.
      * Space complexity: O(n)
      * Time complexity: O(|V|^2). We could improve it to O(|V| + |E|log|V|) by using a Priority Queue, which is useful
      * in sparse matrix, where O|E| ~= O|V|
-     * In that approach we first put all the nodes in a min priority queue, with infinite distance to source, and
-     * the source has to have 0 distance to itself.
-     * We extract the min, update all of its neighbors with new distance (if they are still not visited/done)
+     * In that approach, first put all the nodes in a min priority queue, with infinite distance to source,
+     * the source having 0 distance to itself.
+     * Extract the min, update all of its neighbors with new distance (if they were not 'done' before)
      * It takes O(|V|) to create the priority queue, O(log|V|) to update each neighbor's distance in the queue
      * and maximum of O(|E|) updates
      * @return a map from each node to its distance to the initial node (root)
      */
     @Override
-    public Map<T, Integer> dijkstra() {
-        if (this.root == null) {
+    public Map<T, Integer> dijkstra(IMyGraphNode<T> node) {
+        if (node == null) {
             return Collections.emptyMap();
         }
         // initialize
         Map<IMyGraphNode<T>, Integer> distance = new HashMap<>();
         Set<IMyGraphNode<T>> done = new HashSet<>();
-        distance.put(this.root, 0);
-        IMyGraphNode<T> current = this.root;
+        distance.put(node, 0);
+        IMyGraphNode<T> current = node;
 
         while (current != null) {
             IMyGraphNode<T> closest = null;
