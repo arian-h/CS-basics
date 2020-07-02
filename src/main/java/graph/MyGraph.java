@@ -186,10 +186,14 @@ public class MyGraph<T extends Comparable<T>> implements IMyGraph<T> {
         // first do a slightly-modified dfs to visit all nodes, and therefore edges
         Set<IMyGraphEdge<T>> sortedEdges = new TreeSet<>(getEdges());
         //iterate over ordered set of edges, and select the ones that connect two nodes from different subtrees
-        IMyDisjointSet<T> disjointSet = IMyDisjointSet.getInstance();
+        IMyDisjointSet<IMyGraphNode<T>> disjointSet = IMyDisjointSet.getInstance();
         Set<IMyGraphEdge<T>> mst = new HashSet<>();
         for (IMyGraphEdge<T> edge: sortedEdges) {
-            if (disjointSet.union(edge.getEnds()[0].getValue(), edge.getEnds()[1].getValue())) {
+            IMyGraphNode<T> n1 = edge.getEnds()[0];
+            IMyGraphNode<T> n2 = edge.getEnds()[1];
+            disjointSet.makeSet(n1);
+            disjointSet.makeSet(n2);
+            if (disjointSet.union(n1, n2)) {
                 mst.add(edge);
             }
         }
