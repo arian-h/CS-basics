@@ -2,24 +2,36 @@ package algorithm.famous;
 
 public class ThreewayParition {
 
+    /**
+     * Think of the array as vertical list of elements written on a wall.
+     * We have three stacks:
+     * lower stack: grows from the bottom, having elements that are smaller than p
+     * mid stack: is on top of the lower stack, having elements that are yet to be decided
+     * top stack: grows from top to the bottom, and contains elements that are larger than p
+     *
+     * We start from the first element (on the bottom of our depicted list)
+     * if it is less than p, we swap it with where the top of the lower stack points to
+     * if it is larger than p, we swap it with where the bottom of the top stack points to
+     * otherwise we just move to the next one
+     *
+     * This process loops until top of the middle stack goes over the bottom of the top stack.
+     *
+     * O(1) space, O(n) time.
+     */
     public static void threewayPartition(int[] arr, int p) {
-        /*
-            for the current element, compare it with pivot, if it is
-                Smaller: swap it with smallerNext, and go to the next element in list,
-                Larger: swap it with largerNext, but stay where you are
-                (update the smallerNext and largerNext accordingly)
-                Equal: just go to the next element
-         */
-        int smallerNext = 0;
-        int largerNext = arr.length - 1;
-        for (int i = 0; i < arr.length && i <= largerNext; i++) {
-            if (arr[i] < p) {
-                swap(arr, i, smallerNext);
-                smallerNext++;
-            } else if (arr[i] > p){
-                swap(arr, i, largerNext);
-                largerNext--;
-                i--;
+        int lowerTop = 0;
+        int midTop = 0;
+        int largerBottom = arr.length - 1;
+        while (midTop <= largerBottom) {
+            if (arr[midTop] < p) {
+                swap(arr, lowerTop, midTop);
+                midTop++;
+                lowerTop++;
+            } else if (arr[midTop] > p) {
+                swap(arr, largerBottom, midTop);
+                largerBottom--;
+            } else {
+                midTop++;
             }
         }
     }
