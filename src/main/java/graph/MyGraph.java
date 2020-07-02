@@ -406,17 +406,15 @@ public class MyGraph<T extends Comparable<T>> implements IMyGraph<T> {
      * nodes, and reversing the edges, we make sure to see the end of edge sooner than head of edge, and therefore
      * not leaking from one side to another
      * Time complexity:
-     *  Topological sort: O(|V| + |E|)
+     *  Topological sort: O(|V| + |E|log|V|)
      *  DFS: O(|V| + |E|)
-     *      Total time: O(|V| + |E|)
+     *      Total time: O(|V| + |E|log|V| + |E|) = O (|V| + |E|log|V|)
      * Space complexity: O(n)
      * @return list of Strongly Connected Components
      */
     @Override
     public List<Set<IMyGraphNode<T>>> scc() {
-        List<IMyGraphNode<T>> nodes = dfs_visit(this.root).entrySet().stream()
-                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder())).map(Map.Entry::getKey)
-                .collect(Collectors.toList());
+        List<IMyGraphNode<T>> nodes = topologicalSort_sub();
         Set<IMyGraphNode<T>> visited = new HashSet<>();
         List<Set<IMyGraphNode<T>>> sccs = new ArrayList<>();
         for (IMyGraphNode<T> node: nodes) {
@@ -425,10 +423,10 @@ public class MyGraph<T extends Comparable<T>> implements IMyGraph<T> {
                 Stack<IMyGraphNode<T>> toVisit = new Stack<>();
                 toVisit.add(node);
                 while (!toVisit.isEmpty()) {
-                    IMyGraphNode<T> popped = toVisit.pop();
-                    visited.add(popped);
-                    scc.add(popped);
-                    for (IMyGraphNode<T> neighbor: popped.getIncomingNeighbors()) {
+                    IMyGraphNode<T> current = toVisit.pop();
+                    visited.add(current);
+                    scc.add(current);
+                    for (IMyGraphNode<T> neighbor: current.getIncomingNeighbors()) {
                         if (!visited.contains(neighbor)) {
                             toVisit.push(neighbor);
                         }
