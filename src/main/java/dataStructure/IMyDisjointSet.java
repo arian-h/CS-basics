@@ -22,6 +22,8 @@ public interface IMyDisjointSet<T> {
      */
     boolean sameSet(T t1, T t2);
 
+    void makeSet(T t1);
+
     static <T> IMyDisjointSet<T> getInstance() {
         return new DisjointSet<>();
     }
