@@ -53,24 +53,27 @@ public class MyGraph<T extends Comparable<T>> implements IMyGraph<T> {
             return Collections.emptyMap();
         }
         Map<IMyGraphNode<T>, Integer> finishTime = new HashMap<>();
-        Set<IMyGraphNode<T>> visited = new HashSet<>();
+        Map<IMyGraphNode<T>, Integer> color = new HashMap<>();
         Stack<IMyGraphNode<T>> toVisit = new Stack<>();
+        // push root on the stack
         toVisit.push(node);
         int time = 0;
         while (!toVisit.isEmpty()) {
+            // pop the node on top of the stack
             IMyGraphNode<T> current = toVisit.pop();
-            if (notVisited(current, visited)) {
-                visited.add(current);
-                time++;
-                // we will need to visit it once again, to calculate its finish time
-                toVisit.push(current);
-            } else {
-                if (!finishTime.containsKey(current)) {
-                    finishTime.put(current, time);
-                    time++;
+            if (!color.containsKey(current)) { // it's white
+                toVisit.push(current); // push it back
+                color.put(current, 1); // color it grey
+                for (IMyGraphNode<T> neighbor: current.getOutgoingNeighbors()) { // explore its neighbors
+                    if (!color.containsKey(neighbor)) { // only push in white neighbors
+                        toVisit.push(neighbor);
+                    }
                 }
+                time++;
+            } else if (color.get(current) == 1) { // it's grey
+                color.put(current, 2); // make it black
+                finishTime.put(current, time++);
             }
-            exploreNeighbors(current, toVisit, visited);
         }
         return finishTime;
     }
@@ -572,18 +575,6 @@ public class MyGraph<T extends Comparable<T>> implements IMyGraph<T> {
             closest = neighbor;
         }
         return closest;
-    }
-
-    private boolean notVisited(IMyGraphNode<T> node, Set<IMyGraphNode<T>> visited) {
-        return !visited.contains(node);
-    }
-
-    private void exploreNeighbors(IMyGraphNode<T> node, Stack<IMyGraphNode<T>> toVisit, Set<IMyGraphNode<T>> visited) {
-        for (IMyGraphNode<T> neighbor: node.getOutgoingNeighbors()) {
-            if (!visited.contains(neighbor)) {
-                toVisit.push(neighbor);
-            }
-        }
     }
 
     private void computeFloydWarshallDistance() {
