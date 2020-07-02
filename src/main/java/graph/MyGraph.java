@@ -81,7 +81,24 @@ public class MyGraph<T extends Comparable<T>> implements IMyGraph<T> {
      */
     @Override
     public List<T> bfs() {
-        return getNodes().stream().map(IMyGraphNode::getValue).collect(Collectors.toList());
+        if (this.root == null) {
+            return Collections.emptyList();
+        }
+        Queue<IMyGraphNode<T>> toVisit = new LinkedList<>();
+        Set<IMyGraphNode<T>> visited = new HashSet<>();
+        toVisit.offer(this.root);
+        List<T> bfs = new ArrayList<>();
+        while (!toVisit.isEmpty()) {
+            IMyGraphNode<T> current = toVisit.poll();
+            bfs.add(current.getValue());
+            for (IMyGraphNode<T> neighbor: current.getOutgoingNeighbors()) {
+                if (!visited.contains(neighbor)) {
+                    toVisit.offer(neighbor);
+                    visited.add(neighbor);
+                }
+            }
+        }
+        return bfs;
     }
 
     @Override
