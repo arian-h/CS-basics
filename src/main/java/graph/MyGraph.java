@@ -49,11 +49,20 @@ public class MyGraph<T extends Comparable<T>> implements IMyGraph<T> {
                 .collect(Collectors.toMap(entry -> entry.getKey().getValue(), Map.Entry::getValue));
     }
 
+
+    private Map<IMyGraphNode<T>, Integer> dfs_visit_reverse(IMyGraphNode<T> node) {
+        return dfs_visit(node, true);
+    }
+
+    private Map<IMyGraphNode<T>, Integer> dfs_visit(IMyGraphNode<T> node) {
+        return dfs_visit(node, false);
+    }
+
     /**
      * Time complexity: O(|V| + |E|): each node and edge is visited once
      * @return a map from node values to their nodes' visit order
      */
-    private Map<IMyGraphNode<T>, Integer> dfs_visit(IMyGraphNode<T> node) {
+    private Map<IMyGraphNode<T>, Integer> dfs_visit(IMyGraphNode<T> node, boolean reverse) {
         if (node == null) {
             return Collections.emptyMap();
         }
@@ -69,7 +78,8 @@ public class MyGraph<T extends Comparable<T>> implements IMyGraph<T> {
             if (!color.containsKey(current)) { // it's white
                 toVisit.push(current); // push it back
                 color.put(current, 1); // color it grey
-                for (IMyGraphNode<T> neighbor: current.getOutgoingNeighbors()) { // explore its neighbors
+                // explore the neighbors
+                for (IMyGraphNode<T> neighbor: reverse ? current.getIncomingNeighbors() : current.getOutgoingNeighbors()) {
                     if (!color.containsKey(neighbor)) { // only push in white neighbors
                         toVisit.push(neighbor);
                     }
@@ -334,8 +344,15 @@ public class MyGraph<T extends Comparable<T>> implements IMyGraph<T> {
     }
 
     /**
-     * Time complexity: O(|V| + |E|) as we are using dfs + O(|V|log|V|) as we sort the nodes
-     * Therefore in total: O(|E|+Vlog|V|)
+     * If the graph is undirected, then doing a single pass of dfs is enough
+     *
+     * If the graph is directed, first we need to clarify which type of connected-ness we mean:
+     * Weakly connected: if we replace all edges with undirected edges, the graph is connected
+     * Connected: For every pair of nodes, there is a way from one to another
+     * Strongly connected: Each node, can reach all other nodes in the graph
+     *
+     * Time complexity: O(|V| + |E|) (dfs time)
+     * Therefore in total: O(|E| + |V|)
      */
     @Override
     public boolean isConnected() {
@@ -344,10 +361,12 @@ public class MyGraph<T extends Comparable<T>> implements IMyGraph<T> {
         }
         if (mode == Mode.UNDIRECTED) {
             return dfs_visit(this.root).size() == this.nodes.size();
-        } else {
-            List<IMyGraphNode<T>> l = topologicalSort_sub();
-            return dfs_visit(l.get(0)).size() == this.nodes.size();
         }
+        // directed: do a dfs, and then a reverse dfs. If there is a node that was not visited, then graph is not
+        // connected
+        Map<IMyGraphNode<T>, Integer> visited = dfs_visit(this.root, true);
+        visited.putAll(dfs_visit(this.root, true));
+        return visited.size() == this.nodes.size();
     }
 
     /**

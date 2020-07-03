@@ -265,13 +265,26 @@ public class MyGraphUT {
         IMyGraph<Integer> graph = IMyGraph.getInstance(IMyGraph.Mode.DIRECTED);
         IMyGraphNode<Integer> node1 = graph.addNode(1);
         IMyGraphNode<Integer> node2 = graph.addNode(2);
-        graph.addEdge(node2, node1);
-        graph.setRoot(node1);
+        graph.addEdge(node1, node2);
+        graph.setRoot(node2);
         Assert.assertTrue(graph.isConnected());
     }
 
+    // the graph used in this test is actually weakly connected
     @Test
-    public void testIsConnected_disconnected() {
+    public void testIsConnected_disconnected_1() {
+        IMyGraph<Integer> graph = IMyGraph.getInstance(IMyGraph.Mode.DIRECTED);
+        IMyGraphNode<Integer> node1 = graph.addNode(1);
+        IMyGraphNode<Integer> node2 = graph.addNode(2);
+        IMyGraphNode<Integer> node3 = graph.addNode(3);
+        graph.addEdge(node1, node3);
+        graph.addEdge(node2, node3);
+        graph.setRoot(node1);
+        Assert.assertFalse(graph.isConnected());
+    }
+
+    @Test
+    public void testIsConnected_disconnected_2() {
         IMyGraph<Integer> graph = IMyGraph.getInstance(IMyGraph.Mode.DIRECTED);
         IMyGraphNode<Integer> node1 = graph.addNode(1);
         IMyGraphNode<Integer> node2 = graph.addNode(2);
