@@ -7,12 +7,12 @@ public class LongestCommonSubsequenceUT {
 
     @Test
     public void lcs() {
-        Assert.assertEquals(3, LongestCommonSubsequence.lcs("ABCDGH", "AEDFHR"));
+        Assert.assertEquals(3, LongestCommonSubsequence.find("ABCDGH", "AEDFHR"));
     }
 
     @Test
     public void lcs_2() {
-        Assert.assertEquals(4, LongestCommonSubsequence.lcs("AGGTAB", "GXTXAYB"));
+        Assert.assertEquals(4, LongestCommonSubsequence.find("AGGTAB", "GXTXAYB"));
     }
 
 }
