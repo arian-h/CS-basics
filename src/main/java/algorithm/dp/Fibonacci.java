@@ -17,18 +17,15 @@ public class Fibonacci {
      * @return
      */
     public static long compute(int n) {
-        Preconditions.checkArgument(n > 0);
-        if (n <= 2) {
-            return 1;
+        int[] fib = new int[] {0, 1};
+        int i = 1;
+        while (i < n) {
+            int t = fib[0] + fib[1];
+            fib[0] = fib[1];
+            fib[1] = t;
+            i++;
         }
-        long a = 1, b = 1;
-        long f = 0;
-        for (int i = 3; i <= n; i++) {
-            f = a + b;
-            a = b;
-            b = f;
-        }
-        return f;
+        return fib[1];
     }
 
 }
