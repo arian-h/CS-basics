@@ -499,43 +499,50 @@ public class MyGraph<T extends Comparable<T>> implements IMyGraph<T> {
     }
 
     /**
+     *
+     * 0. To find bridges, use DFS
+     * 1. To find bridges, we don't care about the finish time, we care about the discovery time. Why? because we
+     * just care about the order of visits.
+     * 2. This algorithm works for undirected graphs.
+     * 3. (u,v) is a bridge, if it there is no way to get to v other than through this edge.
+     * This means there is no back edge from v to any ancestor of u.
+     *
      * The idea is same as articulation point, with minor modifications:
-     * 1. The number of children is not counted, because there is no root node to consider
-     * 2. An edge is considered bridge, if discover time of parent is less than low time of the child
-     *      This means the edge is a bridge as its ends belong to two different sets
+     * 1. The number of children doesn't matter, so it's not counted
+     * 2. An edge is considered bridge, if it is a dfs tree edge, and the discovery time of its source is less than
+     *    the low time of its target
+     *
+     * Basically, we update the "lowest reachable discovery time" for each node using dfs.
+     * We ignore the edge that we came to this node through.
+     * For each tree edge, we check the condition to see if it is a bridge.
+     * Otherwise, we just update the discovery time
+     *
+     * To update the discovery time:
+     *      Tree edge: min(lowestReachableDiscoveryTime[neighbor], lowestReachableDiscoveryTime[node])
+     *      Back edge: min(discoveryTime[neighbor], lowestReachableDiscoveryTime[node])
+     *
      * Time complexity: same as dfs O(V+E)
      */
-    private void findBridges(IMyGraphNode<T> node, IMyGraphNode<T> parent,
-                                        Map<IMyGraphNode<T>, Integer> startTime,
-                                        Map<IMyGraphNode<T>, Integer> lowTime) {
-        startTime.put(node, bridgeTime);
-        lowTime.put(node, bridgeTime);
+    private void findBridges(IMyGraphNode<T> node, IMyGraphNode<T> parent, Map<IMyGraphNode<T>, Integer> discoveryTime,
+                                        Map<IMyGraphNode<T>, Integer> lowestReachableDiscoveryTime) {
+        discoveryTime.put(node, bridgeTime);
+        lowestReachableDiscoveryTime.put(node, bridgeTime);
         bridgeTime++;
-        /*
-            iterate over neighbors, ignore if neighbor is parent
-         */
         for (IMyGraphNode<T> neighbor: node.getOutgoingNeighbors()) {
-            if (neighbor != parent) { // not visited yet
-                if (visitedBefore(neighbor, startTime)) { // back edge
-                    /*
-                        If it is a back edge, we compare the current node's low time and neighbor's discovery time.
-                        Low time is the minimum discovery time of a node that the current node can reach.
-                        We don't care what is the low time for the other end of the edge, because that's the furthest
-                        we can go back in a subtree rooted at that point
-                     */
-                    lowTime.put(node, Math.min(lowTime.get(node), startTime.get(neighbor)));
-                } else { // dfs tree edge
-                    // recurse on the dfs tree edge child (neighbor)
-                    findBridges(neighbor, node, startTime, lowTime);
-                    // the current node is an articulation point for a child that doesn't have a back edge
-                    // to the ancestors of current node
-                    if (lowTime.get(neighbor) > startTime.get(node)) {
-                        bridges.add(IMyGraphEdge.getInstance(node, neighbor, mode));
-                    }
-                    // update the current low time, with the low of the neighbors that are in the dfs subtree
-                    // rooted at the current node
-                    lowTime.put(node, Math.min(lowTime.get(node), lowTime.get(neighbor)));
+            if (!visitedBefore(neighbor, discoveryTime)) { // dfs tree edge
+                findBridges(neighbor, node, discoveryTime, lowestReachableDiscoveryTime);
+                lowestReachableDiscoveryTime.put(node,
+                        Math.min(lowestReachableDiscoveryTime.get(node), lowestReachableDiscoveryTime.get(neighbor)));
+                if (lowestReachableDiscoveryTime.get(neighbor) > discoveryTime.get(node)) {
+                    bridges.add(IMyGraphEdge.getInstance(node, neighbor, mode));
                 }
+            } else if (neighbor != parent) { // back edge
+                /*
+                    We don't care what is the low time for the other end of the edge, because that node is the
+                    furthest the node can reach
+                 */
+                lowestReachableDiscoveryTime.put(node,
+                        Math.min(lowestReachableDiscoveryTime.get(node), discoveryTime.get(neighbor)));
             }
         }
     }
