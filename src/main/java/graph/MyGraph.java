@@ -286,8 +286,10 @@ public class MyGraph<T extends Comparable<T>> implements IMyGraph<T> {
     }
 
     /**
+     * This algorithm only uses the node degrees
+     *
      * For undirected graphs:
-     *  there is 0 or 2 vertices of odd degree, the rest are even
+     *  all nodes have even degrees, except maybe for 2 nodes, that could be odd
      * For directed graphs:
      *  all vertices have equal number of in-degree and out-degree OR
      *      there is one node vertex that has out-degree = in-degree + 1 and one
@@ -306,6 +308,9 @@ public class MyGraph<T extends Comparable<T>> implements IMyGraph<T> {
                 } else if (node.getIncomingNeighbors().size() - node.getOutgoingNeighbors().size() == -1){
                     oddCount--;
                 }
+                if (oddCount > 2 || oddCount < -2) {
+                    return false;
+                }
             }
             return oddCount == 0;
         } else {
@@ -319,8 +324,10 @@ public class MyGraph<T extends Comparable<T>> implements IMyGraph<T> {
     }
 
     /**
+     * This algorithm only uses the node degrees
+     *
      * If graph is directed, check if in-degree == out-degree
-     * otherwise check if indegree (or outdegree) is even
+     * if it is undirected, check if indegree (or outdegree) is even
      */
     @Override
     public boolean hasEulerianCircuit() {
