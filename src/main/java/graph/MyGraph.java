@@ -465,22 +465,29 @@ public class MyGraph<T extends Comparable<T>> implements IMyGraph<T> {
     }
 
     /**
-     * For each node, keep discovery time, low time (the minimum discovery time inside the subtree rooted
+     * This algorithm works for undirected graphs.
+     * One very naive approach is to to do dfs for each node, and find the number of tree edges connected to
+     * that node, if there are more than one, then it's an articulation point.
+     *
+     * For each node, find the lowest reachable discovery time (the minimum discovery time inside the subtree rooted
      * at that node).
+     *
      * Iterate through the neighbors, ignore parent
-     *  If the edge you are looking at is a back edge, just update the low time
+     *  If it is a back edge, just update the low time: min(lowTime[node], discoveryTime[neighbor])
      *      (NOTE here that we only compare node's low time with the discovery time of an ancestor. We don't care what
      *      the low time is for that node, as it's not in the subtree rooted at current node)
-     *  Otherwise (If the edge you are looking at is a dfs tree edge)
-     *      recurse over that node
+     *
+     *  Otherwise (If the edge you are looking at is a dfs tree edge) min(lowTime[node], lowTime[neighbor])
+     *      recur over that node
      *      if it has a low time higher than or equal to node's discovery time, it means there is no back edge from
      *      that subtree to ancestors of the current node, which implies it depends on the current node, thus the node
      *      is articulation point
      *      Update the low time for the current node, using low time of the adjacent nodes
      *
      *  At the end check if current node is articulation node:
-     *      if the current node is root, and it has more than a child in dfs tree
-     *      if the current node is not root, but was detected as articulation point within the algorith,
+     *      if the current node is the root, and it has more than one dfs tree edge connected to it in dfs tree
+     *      if the current node is not the root, but was detected as articulation point within the algorithm
+     *
      * Time complexity: same as dfs O(V+E)
      */
     private void findArticulationPoints(IMyGraphNode<T> node, IMyGraphNode<T> parent,
@@ -506,7 +513,7 @@ public class MyGraph<T extends Comparable<T>> implements IMyGraph<T> {
                     lowTime.put(node, Math.min(lowTime.get(node), startTime.get(neighbor)));
                 } else { // dfs tree edge
                     childrenCount++;
-                    // recurse on the dfs tree edge child (neighbor)
+                    // recur on the dfs tree edge child (neighbor)
                     findArticulationPoints(neighbor, node, startTime, lowTime);
                     // the current node is an articulation point for a child that doesn't have a back edge
                     // to the ancestors of current node
