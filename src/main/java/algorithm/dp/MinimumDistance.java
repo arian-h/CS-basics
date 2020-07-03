@@ -10,9 +10,6 @@ public class MinimumDistance {
      *
      * First, it only changes one string (S1), and keep the other one unmodified. This wouldn't affect the final cost.
      * It compares the last characters of the strings:
-     *  If they are the same:
-     *      Cost(S1, S2) = Cost(S1.substring(0, S1.length), S2.substring(0, S2.substring))
-     *  If not:
      *      cost is min of these three costs:
      *          to replace the last character: Cost(S1.substring(0, S1.length - 1), S2.substring(0, S2.length - 1)) + 1
      *              the last characters will be the same, so there is no need to compare them
@@ -32,23 +29,25 @@ public class MinimumDistance {
      *
      */
     public static int findMin(String s1, String s2) {
-        int[][] mem = new int[s1.length() + 1][s2.length() + 1];
+        int removeCost = 1;
+        int insertCost = 1;
+        int replaceCost = 1;
+        int[][] cost = new int[s1.length() + 1][s2.length() + 1];
         for (int i = 0; i <= s1.length(); i++) {
-            for (int j = 0; j <= s2.length(); j++) {
-                if (i == 0) {
-                    mem[i][j] = j;
-                } else if (j == 0) {
-                    mem[i][j] = i;
-                } else {
-                    if (s1.charAt(i - 1) == s2.charAt(j - 1)) {
-                        mem[i][j] = mem[i-1][j-1];
-                    } else {
-                        int min = Math.min(mem[i-1][j] + 1, mem[i][j - 1] + 1);
-                        mem[i][j] = Math.min(min, mem[i-1][j-1] + 1);
-                    }
+            cost[i][0] = i;
+        }
+        for (int j = 0; j <= s2.length(); j++) {
+            cost[0][j] = j;
+        }
+        for (int i = 1; i <= s1.length(); i++) {
+            for (int j = 1; j <= s2.length(); j++) {
+                cost[i][j] = Math.min(cost[i - 1][j] + removeCost, cost[i][j - 1] + insertCost);
+                cost[i][j] = Math.min(cost[i][j], cost[i - 1][j - 1] + replaceCost);
+                if (s1.charAt(i - 1) == s2.charAt(j - 1)) {
+                    cost[i][j] = Math.min(cost[i][j], cost[i - 1][j - 1]);
                 }
             }
         }
-        return mem[s1.length()][s2.length()];
+        return cost[s1.length()][s2.length()];
     }
 }
