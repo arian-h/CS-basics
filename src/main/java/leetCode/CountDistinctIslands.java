@@ -8,6 +8,9 @@ import java.util.Set;
 public class CountDistinctIslands {
 
     /**
+     *
+     * https://leetcode.com/problems/number-of-distinct-islands/
+     *
      * Given a matrix of 0's and 1's, count the number of separate islands that are distinct in shape.
      * Example:
      *
