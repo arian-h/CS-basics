@@ -9,7 +9,7 @@ public class HuffmanCodingMachineUT {
 
     @Test
     public void testMachine() {
-        HuffmanCodingMachine machine = IHuffmanCodingMachine.getInstance(new HashMap<Character, Double>() {{
+        IHuffmanCodingMachine machine = IHuffmanCodingMachine.getInstance(new HashMap<Character, Double>() {{
             put('r', 0.1);
             put('a', 0.2);
             put('y', 0.4);

@@ -12,10 +12,10 @@ public class HuffmanCodingMachine implements IHuffmanCodingMachine {
 
     /**
      * The idea of huffman coding is to create a binary tree, bottom up, according to the probability of seeing each
-     * character in a text. Basically it assigns shorter codes to more frequent symboles, and longer codes to the
-     * more frequent symbols.
+     * character in a text. Basically it assigns shorter codes to more frequent symbols, and longer codes to the
+     * less frequent symbols.
      *
-     * In order to do that, it uses Min Priority Queue based on the frequency of each symbol.
+     * In order to achieve this goal, it uses Min Priority Queue based on the frequency of each symbol.
      * It polls two nodes at each time, and create a parent for them with a frequency equal to the frequency of its
      * children. It continues doing this until it gets to one node in queue, which would be the root.
      *
@@ -29,18 +29,11 @@ public class HuffmanCodingMachine implements IHuffmanCodingMachine {
      *
      * @param charProbability
      */
-    private HuffmanCodingMachine(Map<Character, Double> charProbability) {
+    public HuffmanCodingMachine(Map<Character, Double> charProbability) {
         // create Huffman coding tree
         this.charProbability = charProbability;
         this.root = createTree();
         this.codeMap = new HashMap<>();
-        createCodeMap();
-    }
-
-    private void createCodeMap() {
-        root = createTree();
-        //do a dfs and create coding map
-        dfs(root, new StringBuilder(), 0);
     }
 
     private void dfs(Node root, StringBuilder code, int dir) {
@@ -80,10 +73,6 @@ public class HuffmanCodingMachine implements IHuffmanCodingMachine {
         return queue.poll();
     }
 
-    public static HuffmanCodingMachine getInstance(Map<Character, Double> charProbability) {
-        return new HuffmanCodingMachine(charProbability);
-    }
-
     public String encode(String toEncode) {
         StringBuilder encodedText = new StringBuilder();
         for (char c: toEncode.toCharArray()) {
@@ -108,6 +97,13 @@ public class HuffmanCodingMachine implements IHuffmanCodingMachine {
             }
         }
         return decodedText.toString();
+    }
+
+    @Override
+    public void build() {
+        root = createTree();
+        //do a dfs and create coding map
+        dfs(root, new StringBuilder(), 0);
     }
 
     private static class Node {

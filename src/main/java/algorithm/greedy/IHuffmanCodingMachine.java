@@ -18,8 +18,12 @@ public interface IHuffmanCodingMachine {
      */
     String decode(String encodedText);
 
-    static HuffmanCodingMachine getInstance(Map<Character, Double> charProbability) {
-        return HuffmanCodingMachine.getInstance(charProbability);
+    void build();
+
+    static IHuffmanCodingMachine getInstance(Map<Character, Double> charProbability) {
+        HuffmanCodingMachine huffman = new HuffmanCodingMachine(charProbability);
+        huffman.build();
+        return huffman;
     }
 
 }
