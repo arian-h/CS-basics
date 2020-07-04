@@ -3,6 +3,7 @@ package algorithm.greedy;
 import com.google.common.base.Preconditions;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -32,16 +33,13 @@ public class SetCover {
         Preconditions.checkArgument(subsets != null);
         Preconditions.checkArgument(costs != null);
         Preconditions.checkArgument(subsets.size() == costs.length);
+        subsets = new ArrayList<>(subsets);
         List<Set<T>> minSubsets = new ArrayList<>();
-        Set<T> universe = new HashSet<>();
-        for (Set<T> subset: subsets) {
-            universe.addAll(subset);
-        }
-        int universeSize = universe.size();
+        int universeSize = subsets.stream().flatMap(Collection::stream).collect(Collectors.toSet()).size();
         Set<T> bag = new HashSet<>();
         while (bag.size() != universeSize) {
             Set<T> minCostSubset = minCostSubset(subsets, bag, costs);
-            universe.removeAll(minCostSubset);
+            subsets.remove(minCostSubset);
             bag.addAll(minCostSubset);
             minSubsets.add(minCostSubset);
         }
