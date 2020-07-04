@@ -25,22 +25,17 @@ public class TaskScheduler {
         Preconditions.checkArgument(startTime != null);
         Preconditions.checkArgument(processLength.length == startTime.length);
         int tasksCount = startTime.length;
-        PriorityQueue<Task> toFetch = new PriorityQueue<>((t1, t2) -> {
-            if (t1.startTime == t2.startTime) {
-                return t1.remainingTime - t2.remainingTime;
-            } else {
-                return t1.startTime - t2.startTime;
-            }
-        });
+        List<Task> tasks = new ArrayList<>();
         for (int i = 0; i < tasksCount; i++) {
-            toFetch.offer(new Task(startTime[i], processLength[i]));
+            tasks.add(new Task(startTime[i], processLength[i]));
         }
+        tasks.sort(Comparator.comparingInt(t -> t.startTime));
         PriorityQueue<Task> toProcess = new PriorityQueue<>(Comparator.comparing(Task::getRemainingTime));
         List<Task> completedTasks = new ArrayList<>();
         int time = 0;
         while (completedTasks.size() < tasksCount) {
-            if (!toFetch.isEmpty() && time >= toFetch.peek().startTime) {
-                toProcess.offer(toFetch.poll());
+            while (!tasks.isEmpty() && time >= tasks.get(0).startTime) {
+                toProcess.offer(tasks.remove(0));
             }
             time++;
             if (!toProcess.isEmpty()) {
