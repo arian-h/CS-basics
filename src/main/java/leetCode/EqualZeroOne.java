@@ -6,6 +6,8 @@ import java.util.Map;
 public class EqualZeroOne {
 
     /**
+     * https://leetcode.com/problems/contiguous-array/
+     * 
      * Find the subarray that has equal number of 0's and 1's
      *
      * Iterate over the array, and find the earliest index that had the same different in the count of 0's and 1's
