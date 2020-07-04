@@ -1,6 +1,5 @@
 package algorithm.famous;
 
-import java.util.Arrays;
 
 public class KMP {
 
@@ -10,22 +9,23 @@ public class KMP {
      * compare characters of the pattern with the text. This results an algorithm with O(n*m) time complexity, which
      * doesn't perform well for long texts. The main reason behind this high time complexity is "backtracking" which
      * wastes time. When there is a mismatch between a text and a pattern, no matter how any characters matched before
-     * the mismatch, we move the pattern by one character, and we do the comparison from the beginning of both text
-     * and pattern. This backtracking wastes time.
+     * the mismatch, we do the comparison from the beginning of both text and pattern.
+     *
+     *                                  This backtracking in text wastes time.
      *
      * KMP lets us to move only in forward direction within the text, examining one character at a time, and therefore
      * no backtracking and no time waste and O(n + m) time complexity. (n: text length, m: pattern length)
      * This time improvement becomes possible with cost of preprocessing the pattern, inducing O(m) space complexity
      * while in the naive method, space complexity was O(1).
      *
-     * The state machine for the pattern tells the algorithm that in case of a mismatch between pattern and text,
-     * how many characters from the beginning of the pattern can be skipped, so the algorithm doesn't need to backtrack
-     * on the text.
-     * This is the main reason that this algorithm works in such time.
+     * In the preprocessing phase, we create a state machine for the pattern. This state machine is fed one character
+     * of the main text at a time, guiding that in case of a mismatch, how many characters from the beginning of the
+     * pattern can be skipped, so the algorithm doesn't need to backtrack on the text.
+     * This is the main reason that this algorithm works in a better time.
      *
      * How does the algorithm work?
      * initialize state of the state machine to 0. We need this state to move between different states.
-     * Iterate over text, one character at a time, feed it to state machine and get the next state
+     * Iterate over text, one character at a time, feed it to state machine and get the next expected state (character).
      * Check if the given text character matches with the expected character that state is pointing to,
      * If it does, then increase state by one (go to the next state in sequence) and go to the next character in text
      * If it doesn't, then find another state and compare text character with that one.
@@ -33,6 +33,9 @@ public class KMP {
      * How to find another state?
      * The state machine contains length of the longest prefix that is also a suffix of each substring
      * (starting from the beginning of the pattern).
+     *
+     *              The state machine contains the length of the longest prefix, that is also a prefix.
+     *
      * If there is a mismatch, then algorithm looks at the previous state in sequence to find how many characters
      * from the pattern it can skip, and it compare the text character with the next character after the skipped ones.
      *
@@ -92,7 +95,7 @@ public class KMP {
 //        return states;
 //    }
 
-    /**
+    /** (suffix and prefix should be shorter than the string itself, otherwise they are not suffix or prefix)
      * Each state is the length of the longest prefix that is also a suffix of the substring ending at the index of state
      * Except for the whole sub-pattern. For example for "aaba",
      * index 0: 0 there is no prefix for substring "a" that is also suffix of it and is shorter than "a" as well.
