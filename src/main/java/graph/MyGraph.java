@@ -383,7 +383,7 @@ public class MyGraph<T extends Comparable<T>> implements IMyGraph<T> {
      * Time complexity: O(|V| + |E|) we visit each node once, and each edge twice
      * Space complexity: O(|V|) to keep the colors for nodes.
      *
-     * There exists a better approximation as well, called Welsh-Powell algorithm.
+     * There exists a better approximation called Welsh-Powell algorithm.
      * In that algorithm, first nodes are sorted based on their degree in decreasing order,
      * the first node in the list is selected, and colored to a minimum number and all the nodes in the list
      * that are not adjacent to that node are painted with the same color. This process continues for nodes without
@@ -392,18 +392,29 @@ public class MyGraph<T extends Comparable<T>> implements IMyGraph<T> {
      */
     @Override
     public int minColors() {
-        // move over the nodes
-        // for the current node in hand, find the minimum color number
-        // assign it to the node, move to the next one
-        Map<IMyGraphNode<T>, Integer> colors = new HashMap<>();
-        for (IMyGraphNode<T> node: nodes.values()) {
-            colors.put(node, findMinimumColor(node, colors));
+        List<IMyGraphNode<T>> nodes = this.nodes.values().stream().sorted((node1, node2) -> {
+            if (this.mode == Mode.DIRECTED) {
+                return node2.getOutgoingNeighbors().size() + node2.getIncomingNeighbors().size() -
+                        node1.getOutgoingNeighbors().size() - node1.getIncomingNeighbors().size();
+            } else {
+                return node2.getOutgoingNeighbors().size() - node1.getOutgoingNeighbors().size();
+            }
+        }).collect(Collectors.toList());
+        int c = 0;
+        Map<IMyGraphNode<T>, Integer> color = new HashMap<>();
+        for (int i = 0; i < nodes.size(); i++) {
+            if (!color.containsKey(nodes.get(i))) {
+                color.put(nodes.get(i), c);
+                for (int j = i + 1; j < nodes.size(); j++) {
+                    if (!nodes.get(i).getIncomingNeighbors().contains(nodes.get(j)) &&
+                            !nodes.get(i).getOutgoingNeighbors().contains(nodes.get(j))) {
+                        color.put(nodes.get(j), c);
+                    }
+                }
+                c++;
+            }
         }
-        int max = Integer.MIN_VALUE;
-        for (int color: colors.values()) {
-            max = Math.max(color, max);
-        }
-        return max;
+        return c;
     }
 
     private int findMinimumColor(IMyGraphNode<T> node, Map<IMyGraphNode<T>, Integer> colors) {
