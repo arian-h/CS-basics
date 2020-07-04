@@ -3,6 +3,9 @@ package leetCode;
 public class BackspaceStringCompare {
 
     /**
+     *
+     * https://leetcode.com/problems/backspace-string-compare/
+     * 
      * Given a couple of strings, check if they are equal. # is a special character though, it remove the character
      * before it.
      *
