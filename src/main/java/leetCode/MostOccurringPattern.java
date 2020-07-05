@@ -15,6 +15,9 @@ public class MostOccurringPattern {
     private final Map<String, List<String>> userVisits = new HashMap<>();
 
     /**
+     *
+     * https://leetcode.com/problems/analyze-user-website-visit-pattern/
+     *
      * Having a history of web page views, including the name of the user who visited the page, and time
      * this algorithm finds the view path of length 3 that was most frequently visited by unique users.
      * (in other words, if one user viewed a single path of length three several times, it's only counted once.
