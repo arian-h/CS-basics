@@ -1,15 +1,16 @@
 package leetCode;
 
-import javafx.util.Pair;
-
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class SparseMatrixMultiplication {
 
     /**
+     *  https://leetcode.com/problems/sparse-matrix-multiplication/
+     *
+     * Given two sparse matrices A and B, return the result of AB.
+     * You may assume that A's column number is equal to B's row number.
+     *
      * The idea is same as multiplying two matrices, but with a check to avoid looping through the elements
      * of the second matrix, if the element on the first matrix is 0.
      *
@@ -37,8 +38,7 @@ public class SparseMatrixMultiplication {
      * Second way to multiply two sparse matrix. For each matrix, only keep the elements that are non-zero in a map.
      * For the left matrix, keep a list of non-zero elements, for each row.
      * For the right matrix, keep a list of non-zero elements, for each column.
-     * For each element in the resulting matrix, check the list and col that contribute to that element,
-     * and multiply them by putting two indexes on two lists.
+     * For each element in the resulting matrix, check the list and col that contribute to that element.
      *
      * Time complexity: (nm + mq + nq), where A is n * m, B is m * q
      *
@@ -47,59 +47,40 @@ public class SparseMatrixMultiplication {
      * @return
      */
     public static int[][] multiplySparse(int[][] A, int[][] B) {
-        Map<Integer, List<Pair<Integer, Integer>>> matrix1 = new HashMap<>();
+        Map<Integer, Map<Integer, Integer>> m1 = new HashMap<>();
         for (int i = 0; i < A.length; i++) {
-            List<Pair<Integer, Integer>> elements = new ArrayList<>();
             for (int j = 0; j < A[0].length; j++) {
                 if (A[i][j] != 0) {
-                    elements.add(new Pair<>(j, A[i][j]));
+                    m1.putIfAbsent(i, new HashMap<>());
+                    m1.get(i).put(j, A[i][j]);
                 }
             }
-            if (elements.size() > 0) {
-                matrix1.put(i, elements);
-            }
         }
-        Map<Integer, List<Pair<Integer, Integer>>> matrix2 = new HashMap<>();
-        for (int i = 0; i < B[0].length; i++) {
-            List<Pair<Integer, Integer>> elements = new ArrayList<>();
-            for (int j = 0; j < B.length; j++) {
-                if (B[j][i] != 0) {
-                    elements.add(new Pair<>(j, B[j][i]));
+
+        Map<Integer, Map<Integer, Integer>> m2 = new HashMap<>();
+        for (int i = 0; i < B.length; i++) {
+            for (int j = 0; j < B[0].length; j++) {
+                if (B[i][j] != 0) {
+                    m2.putIfAbsent(j, new HashMap<>());
+                    m2.get(j).put(i, B[i][j]);
                 }
             }
-            if (elements.size() > 0) {
-                matrix2.put(i, elements);
+        }
+
+        int[][] result = new int[A.length][B[0].length];
+        for (int i = 0; i < result.length; i++) {
+            for (int j = 0; j < result[0].length; j++) {
+                result[i][j] = 0;
+                if (m1.containsKey(i)) {
+                    for (int k: m1.get(i).keySet()) {
+                        if (m2.containsKey(k) && m2.get(k).containsKey(j)) {
+                            result[i][j] += m1.get(i).get(k) * m2.get(k).get(j);
+                        }
+                    }
+                }
             }
         }
-        int[][] m = new int[A.length][B[0].length];
-        for (int i = 0; i < m.length; i++) {
-            for (int j = 0; j < m[0].length; j++) {
-                m[i][j] = multiply(matrix1.get(i), matrix2.get(j));
-            }
-        }
-        return m;
+        return result;
     }
 
-    private static int multiply(List<Pair<Integer, Integer>> l1, List<Pair<Integer, Integer>> l2) {
-        if (l1 == null || l2 == null) {
-            return 0;
-        }
-        int i = 0;
-        int j = 0;
-        int m = 0;
-        while (i < l1.size() && j < l2.size()) {
-            Pair<Integer, Integer> p1 = l1.get(i);
-            Pair<Integer, Integer> p2 = l2.get(j);
-            if (p1.getKey().equals(p2.getKey())) {
-                m += p1.getValue() * p2.getValue();
-                i++;
-                j++;
-            } else if (p1.getKey() < p2.getKey()) {
-                i++;
-            } else {
-                j++;
-            }
-        }
-        return m;
-    }
 }
