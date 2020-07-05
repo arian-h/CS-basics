@@ -2,18 +2,25 @@ package leetCode;
 
 public class SetMatrixToZero {
 
+    /**
+     * https://leetcode.com/problems/set-matrix-zeroes/
+     *
+     * Given a m x n matrix, if an element is 0, set its entire row and column to 0. Do it in-place.
+     *
+     * @param matrix
+     */
     public static void set(int[][] matrix) {
-        boolean setColToZero = false;
-        boolean setRowToZero = false;
+        boolean setFirstColToZero = false;
+        boolean setFirstRowToZero = false;
         for (int i = 0; i < matrix.length; i++) {
             if (matrix[i][0] == 0) {
-                setColToZero = true;
+                setFirstColToZero = true;
                 break;
             }
         }
         for (int i = 0; i < matrix[0].length; i++) {
             if (matrix[0][i] == 0) {
-                setRowToZero = true;
+                setFirstRowToZero = true;
                 break;
             }
         }
@@ -32,12 +39,12 @@ public class SetMatrixToZero {
                 }
             }
         }
-        if (setRowToZero) {
+        if (setFirstRowToZero) {
             for (int i = 0; i < matrix[0].length; i++) {
                 matrix[0][i] = 0;
             }
         }
-        if (setColToZero) {
+        if (setFirstColToZero) {
             for (int i = 0; i < matrix.length; i++) {
                 matrix[i][0] = 0;
             }
