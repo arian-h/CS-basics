@@ -19,8 +19,9 @@ public class SearchRotateSortedArray {
      * the algorithm has to decide to go left or right. Here there is a trick to get rid of at least one
      * duplicate element. If the mid element is equal to the left element, we can throw out left element, as we
      * know it's not what we are looking for.
-     * For the rest of the search, the algorithm abandons the sub array (left/right) that it's sure the element
-     * doesn't exist in.
+     *
+     * The algorithm abandons the sub array (left/right) that it's sure the element doesn't exist in. It does this
+     * by checking mid element with left element
      *
      * It continues until there is only 1 element, and checks if that element is what it looks for.
      *
