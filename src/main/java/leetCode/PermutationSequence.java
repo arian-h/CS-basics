@@ -21,17 +21,21 @@ public class PermutationSequence {
      * @param k
      * @return
      */
-    public static String get(int n, int k) {
+    public static int get(int n, int k) {
         int[] num = initializeNumberArray(n);
         for (int i = 0; i < n && k > 1; i++) {
             int factorial = factorial(n - i - 1); // permutations count for the digits on right of i-th digit
-            if (factorial < k) { // i-th digit would change
+            if (k > factorial) { // i-th digit would change
                 int change = (int) Math.ceil((double) k / factorial) - 1; // how many times it may change? 0 means no change
                 changeDigit(num, i, change); // change the i-th digit for 'change' number of times
                 k -= factorial * change;
             }
         }
-        return convertToString(num);
+        int total = 0;
+        for (int i: num) {
+            total = total * 10 + i;
+        }
+        return total;
     }
 
     private static int[] initializeNumberArray(int n) {
@@ -63,11 +67,4 @@ public class PermutationSequence {
         arr[j] = t;
     }
 
-    private static String convertToString(int[] num) {
-        StringBuilder strbld = new StringBuilder();
-        for (int n: num) {
-            strbld.append(n);
-        }
-        return strbld.toString();
-    }
 }
