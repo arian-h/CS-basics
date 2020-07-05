@@ -6,7 +6,16 @@ import java.util.Set;
 public class SubArraySumMultiple {
 
     /**
-     * Given an array, find if there is a subarray of at least length two, that sums up to a multiplication of given k
+     * https://leetcode.com/problems/continuous-subarray-sum/
+     *
+     * Given a list of non-negative numbers and a target integer k, write a function to check if the array
+     * has a continuous subarray of size at least 2 that sums up to a multiple of k, that is, sums up to n*k
+     * where n is also an integer.
+     *
+     * Input: [23, 2, 4, 6, 7],  k=6
+     * Output: True
+     * Explanation: Because [2, 4] is a continuous subarray of size 2 and sums up to 6.
+     *
      * The idea is same as Sub array sum, but with a simple tweak of storing remainder of sums, instead of the sums.
      *
      * Time and space complexity: O(n)
