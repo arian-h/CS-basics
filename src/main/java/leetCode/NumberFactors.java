@@ -1,7 +1,11 @@
 package leetCode;
 
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class NumberFactors {
 
@@ -11,46 +15,37 @@ public class NumberFactors {
      * Do not include 1, or the number itself in the answer
      * For example: 37: {}
      *
-     * To reduce the complexity of the problem, first find the divisors of the given number and recursively move over
-     * these numbers to find the answer. In each step, if the number in the recursion can be divided by the divisor,
-     * either include it or not, otherwise don't include it and move to the next one.
-     * If the given number is 1, just check if the length of the path so far is equal to or larger than 0 put it in
-     * the final answer
      *
-     * @return A set of sets, each set consists of numbers that multiplying them would result the number
+     * @return A list of factors, each set consists of numbers that multiplying them would result the number
      */
     public static List<List<Integer>> getFactors(int n) {
-        List<Integer> divisors = getDivisors(n);
-        List<Integer> partialFactors = new ArrayList<>();
-        List<List<Integer>> factors = new ArrayList<>();
-        getFactors(n, divisors, 0, partialFactors, factors);
-        return factors;
+        return getFactors(n, n).stream().filter(l -> !l.isEmpty()).collect(Collectors.toList());
     }
 
-    private static void getFactors(int n, List<Integer> divisors, int index, List<Integer> partialFactors,
-                                   List<List<Integer>> factors) {
+    private static List<List<Integer>> getFactors(int n, int original) {
+        List<List<Integer>> factorsList = new ArrayList<>();
         if (n == 1) {
-            if (partialFactors.size() > 0) {
-                factors.add(new ArrayList<>(partialFactors));
-            }
-        } else {
-            if (index < divisors.size()) {
-                if (n % divisors.get(index) == 0) {
-                    partialFactors.add(divisors.get(index));
-                    getFactors(n / divisors.get(index), divisors, index, partialFactors, factors);
-                    partialFactors.remove(partialFactors.size() - 1);
+            factorsList.add(new ArrayList<>());
+            return factorsList;
+        }
+        for (int i = 2; i <= n && i < original; i++) {
+            if (n % i == 0) {
+                for (List<Integer> subFactor: getFactors(n / i, original)) {
+                    List<Integer> clonedSubFactor = new ArrayList<>(subFactor);
+                    clonedSubFactor.add(i);
+                    factorsList.add(clonedSubFactor);
                 }
-                getFactors(n, divisors, index + 1, partialFactors, factors);
             }
         }
+        return dedupFactorsList(factorsList);
     }
 
-    private static List<Integer> getDivisors(int n) {
-        List<Integer> divisors = new ArrayList<>();
-        for (int i = 2; i <= n / 2; i++) {
-            divisors.add(i);
+    static List<List<Integer>> dedupFactorsList(List<List<Integer>> factorsList) {
+        Map<String, List<Integer>> factorsMap = new HashMap<>();
+        for (List<Integer> factors: factorsList) {
+            factors.sort(Comparator.comparingInt(n2 -> n2));
+            factorsMap.put(factors.toString(), factors);
         }
-        return divisors;
+        return new ArrayList<>(factorsMap.values());
     }
-
 }
