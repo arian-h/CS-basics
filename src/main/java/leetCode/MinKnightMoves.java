@@ -21,9 +21,9 @@ public class MinKnightMoves {
      * what is the minimum number of moves to get from (0,0) to (x,y)
      *
      * Algorithm: This algorithm uses BFS. As 4 direction of the an infinite chess board are symmetric, we
-     * map destination to the top left quadrant and search for it there (it reduces time and space by constant factor)
+     * map destination to the top right quadrant and search for it there (it reduces time and space by a constant factor)
      * We should take care about some points that on the way to get to them the knight
-     * may need to go out of the top left quadrant by -1.
+     * may need to go out of the top right quadrant by -1.
      *
      * @param x x coordinate of destination
      * @param y y coordination of destination
