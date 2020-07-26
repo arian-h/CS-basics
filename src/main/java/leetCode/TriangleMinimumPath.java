@@ -17,6 +17,9 @@ public class TriangleMinimumPath {
      * ]
      * The minimum path sum from top to bottom is 11 (i.e., 2 + 3 + 5 + 1 = 11).
      *
+     * This solution uses dynamic programming, from bottom to the top.
+     * On each level, it maintains an array with the same length as the level of the triangle.
+     *
      * @param triangle
      * @return
      */
